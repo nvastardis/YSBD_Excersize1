@@ -11,7 +11,7 @@
   BF_ErrorCode code = call; \
   if (code != BF_OK) {         \
     BF_PrintError(code);    \
-    return -1;        \
+    exit(code);        \
   }                         \
 }
 
@@ -88,5 +88,31 @@ int HP_InsertEntry(HP_info *header_info, Record record){
 }
 
 int HP_GetAllEntries(HP_info *header_info, int id){
-  return -1;
+    int counter, blocksInFile, blockSearched;
+
+    CALL_BF(BF_GetBlockCounter(header_info->fileDescription, &blocksInFile))
+    for(counter = 0; counter < blocksInFile; counter++){
+        int recordCounter;
+        void *data;
+        BF_Block *block;
+        Record *records;
+        HP_block_info block_info;
+
+        CALL_BF(BF_GetBlock(header_info->fileDescription, counter, block));
+        data = BF_Block_GetData(block);
+        records = (Record*) data;
+        memcpy(&block_info, data+10, sizeof(HP_block_info));
+        for(recordCounter = 0; recordCounter < block_info.RecordCount; recordCounter++){
+            if(records[recordCounter].id == id){
+                fprintf(stdout, "%d\t%s\t%s\t%s", 
+                                records[recordCounter].id,
+                                records[recordCounter].record,
+                                records[recordCounter].name,
+                                records[recordCounter].surname,
+                                records[recordCounter].city
+                                );
+            }
+        }
+    }
+    return blocksInFile;
 }
