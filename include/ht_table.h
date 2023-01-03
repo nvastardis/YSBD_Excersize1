@@ -2,15 +2,19 @@
 #define HT_TABLE_H
 #include <record.h>
 
-
-
+#define MAX_NUMBER_OF_BUCKETS 20
+#define RECORDS_PER_BLOCK BF_BLOCK_SIZE / sizeof(Record)
 
 typedef struct {
-    // Να το συμπληρώσετε
+    int fileDescriptor;
+    char *fileName;
+    long int numberOfBuckets;
+    int bucketDefinitionsBlock;
+    int hashtableMapping[MAX_NUMBER_OF_BUCKETS];
 } HT_info;
 
 typedef struct {
-    // Να το συμπληρώσετε
+    int RecordCount;
 } HT_block_info;
 
 /*Η συνάρτηση HT_CreateFile χρησιμοποιείται για τη δημιουργία

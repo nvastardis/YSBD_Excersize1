@@ -96,6 +96,10 @@ int HP_InsertEntry(HP_info* hp_info, Record record){
         data = BF_Block_GetData(block);
         memcpy(&block_info, (HP_block_info*)(data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), sizeof(HP_block_info));
         if(block_info.RecordCount ==RECORDS_PER_BLOCK){
+            if(BF_UnpinBlock(block)){
+                return -1;
+            }
+            BF_Block_Destroy(&block);
             return (SetUpNewBlock(hp_info, record));
         }
         records = (Record*)data;
