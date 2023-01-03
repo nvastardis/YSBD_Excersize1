@@ -6,7 +6,6 @@
 
 typedef struct {
   int RecordCount;
-  BF_Block* NextBlock;
 } HP_block_info;
 
 /* Η δομή HP_info κρατάει μεταδεδομένα που σχετίζονται με το αρχείο σωρού*/

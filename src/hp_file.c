@@ -15,7 +15,7 @@
   }                         \
 }
 
-int SetUpNewBlock(HP_info *hp_info, Record record, BF_Block *previousBlock);
+int SetUpNewBlock(HP_info *hp_info, Record record);
 
 int HP_CreateFile(char *fileName){
     int fileDesc;
@@ -86,7 +86,7 @@ int HP_InsertEntry(HP_info* hp_info, Record record){
     }
     
     if(numberOfBlocks == 1){
-        return (SetUpNewBlock(hp_info, record, NULL));
+        return (SetUpNewBlock(hp_info, record));
     }
     else{
         BF_Block_Init(&block);
@@ -96,7 +96,7 @@ int HP_InsertEntry(HP_info* hp_info, Record record){
         data = BF_Block_GetData(block);
         memcpy(&block_info, (HP_block_info*)(data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), sizeof(HP_block_info));
         if(block_info.RecordCount ==RECORDS_PER_BLOCK){
-            return (SetUpNewBlock(hp_info, record, block));
+            return (SetUpNewBlock(hp_info, record));
         }
         records = (Record*)data;
         records[block_info.RecordCount] = record;
@@ -160,7 +160,7 @@ int HP_GetAllEntries(HP_info* hp_info, int value){
     return -1;
 }
 
-int SetUpNewBlock(HP_info *hp_info, Record record, BF_Block *previousBlock){
+int SetUpNewBlock(HP_info *hp_info, Record record){
     int counter,
         numberOfBlocks;
     void *data;
@@ -181,23 +181,11 @@ int SetUpNewBlock(HP_info *hp_info, Record record, BF_Block *previousBlock){
         return -1;
     }
 
-    block_info.NextBlock = NULL;
     block_info.RecordCount = 1;
     memcpy( (data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), &block_info, sizeof(HP_block_info));
-    
-
-
-    if(previousBlock != NULL){
-        data = BF_Block_GetData(previousBlock);
-        memcpy( &block_info, (data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), sizeof(HP_block_info));
-
-        block_info.NextBlock = block;
-
-        memcpy( (data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), &block_info, sizeof(HP_block_info));
-    }
+    BF_Block_Destroy(&block);
     return 0;
 
-    BF_Block_Destroy(&block);
 }
 
 
