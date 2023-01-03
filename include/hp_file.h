@@ -2,11 +2,17 @@
 #define HP_FILE_H
 #include <record.h>
 
+#define RECORDS_PER_BLOCK BF_BLOCK_SIZE / sizeof(Record)
 
+typedef struct {
+  int RecordCount;
+  BF_Block* NextBlock;
+} HP_block_info;
 
 /* Η δομή HP_info κρατάει μεταδεδομένα που σχετίζονται με το αρχείο σωρού*/
 typedef struct {
-    int fileDescription;
+    int fileDescriptor;
+    char *fileName;
 } HP_info;
 
 /*Η συνάρτηση HP_CreateFile χρησιμοποιείται για τη δημιουργία και
