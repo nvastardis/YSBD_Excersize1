@@ -198,14 +198,13 @@ int SetUpNewEmptyBlock(HT_info *ht_info){
         numberOfBlocks;
     void *data;
     BF_Block *block;
-    Record *blockData;
     HT_block_info block_info;
 
     BF_Block_Init(&block);
     if(BF_AllocateBlock(ht_info->fileDescriptor, block)){
         return -1;
     }
-    BF_Block_SetDirty(block);
+    data = BF_Block_GetData(block);
     if(BF_UnpinBlock(block)){
         return -1;
     }
