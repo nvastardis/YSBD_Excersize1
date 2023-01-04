@@ -15,6 +15,7 @@ typedef struct {
 
 typedef struct {
     int RecordCount;
+    int PreviousBlockId;
 } HT_block_info;
 
 /*Η συνάρτηση HT_CreateFile χρησιμοποιείται για τη δημιουργία
