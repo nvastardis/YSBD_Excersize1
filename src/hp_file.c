@@ -141,14 +141,7 @@ int HP_GetAllEntries(HP_info* hp_info, int value){
         records = (Record*) data;
         for(recordCounter = 0; recordCounter < block_info.RecordCount; recordCounter++){
             if(records[recordCounter].id == value){
-                printf( "\nResult:  %d\t%s\t%s\t%s\t%s\nRecords Searched: %d\n", 
-                                records[recordCounter].id,
-                                records[recordCounter].record,
-                                records[recordCounter].name,
-                                records[recordCounter].surname,
-                                records[recordCounter].city,
-                                recordsSearched
-                                );
+                printRecord(records[recordCounter]);
                 if(BF_UnpinBlock(block)){
                     return -1;
                 }
