@@ -20,8 +20,16 @@
 int main() {
   BF_Init(LRU);
 
-  HP_CreateFile(FILE_NAME);
+  if(HP_CreateFile(FILE_NAME)){
+    printf("Error Creating File");
+    return -1;
+  }
+
   HP_info* info = HP_OpenFile(FILE_NAME);
+  if(info == NULL){
+    printf("Error opening file");
+    return -1;
+  }
 
   Record record;
   srand(12569874);
@@ -29,13 +37,18 @@ int main() {
   printf("Insert Entries\n");
   for (int id = 0; id < RECORDS_NUM; ++id) {
     record = randomRecord();
-    HP_InsertEntry(info, record);
+    if(HP_InsertEntry(info, record)){
+      printf("Error inserting record %d", id);
+      return -1;
+    }
   }
 
   printf("RUN PrintAllEntries\n");
   int id = rand() % RECORDS_NUM;
   printf("\nSearching for: %d",id);
-  HP_GetAllEntries(info, id);
+  if(HP_GetAllEntries(info, id) == -1){
+    printf("Error finding record with id: %d", id);
+  }
 
   HP_CloseFile(info);
   BF_Close();

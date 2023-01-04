@@ -63,9 +63,6 @@ HP_info* HP_OpenFile(char *fileName){
 
 
 int HP_CloseFile( HP_info* hp_info ){
-    int counter,
-        numberOfBlocks;
-
     if(BF_CloseFile(hp_info->fileDescriptor)){
         return -1;
     }
@@ -117,7 +114,7 @@ int HP_InsertEntry(HP_info* hp_info, Record record){
 }
 
 int HP_GetAllEntries(HP_info* hp_info, int value){
-       int recordCounter, counter, blocksInFile, recordsSearched, fileFound;
+    int recordCounter, counter, blocksInFile, recordsSearched, fileFound;
     void *data;
     Record *records;
 
@@ -132,7 +129,7 @@ int HP_GetAllEntries(HP_info* hp_info, int value){
 
 
     BF_Block_Init(&block);
-    for(counter = 1; counter <= blocksInFile; counter++){
+    for(counter = 1; counter < blocksInFile; counter++){
         if(BF_GetBlock(hp_info->fileDescriptor, counter, block)){
             return -1;
         }
@@ -155,6 +152,7 @@ int HP_GetAllEntries(HP_info* hp_info, int value){
                 if(BF_UnpinBlock(block)){
                     return -1;
                 }
+                BF_Block_Destroy(&block);
                 return recordsSearched;
             }
             recordsSearched++;
