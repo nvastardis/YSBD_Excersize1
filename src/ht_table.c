@@ -126,7 +126,7 @@ int HT_InsertEntry(HT_info* ht_info, Record record){
         }
 
         ht_info->hashtableMapping[hashValue] = numberOfBlocks - 1;
-        return 0;
+        return ht_info->hashtableMapping[hashValue];
     }
 
     records = (Record*)data;
@@ -139,7 +139,7 @@ int HT_InsertEntry(HT_info* ht_info, Record record){
     memcpy( (HT_block_info*)(data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), &block_info, sizeof(HT_block_info));
     BF_Block_Destroy(&block);
 
-    return 0;
+    return ht_info->hashtableMapping[hashValue];
 }
 
 int HT_GetAllEntries(HT_info* ht_info, void *value ){
@@ -147,7 +147,7 @@ int HT_GetAllEntries(HT_info* ht_info, void *value ){
         recordCounter, 
         counter, 
         blocksInFile, 
-        recordsSearched, 
+        blocksSearched, 
         fileFound,
         currentBlockId;
     void *data;
@@ -155,7 +155,7 @@ int HT_GetAllEntries(HT_info* ht_info, void *value ){
     BF_Block *block;
     HT_block_info block_info;
 
-    recordsSearched = 0;
+    blocksSearched = 0;
     fileFound = 0;
     if(BF_GetBlockCounter(ht_info->fileDescriptor, &blocksInFile)){
         return -1;
@@ -175,6 +175,7 @@ int HT_GetAllEntries(HT_info* ht_info, void *value ){
         if(BF_UnpinBlock(block)){
             return -1;
         }
+        blocksSearched++;
         memcpy( &block_info, (data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), sizeof(HT_block_info));
         records = (Record*) data;
         for(recordCounter = 0; recordCounter < block_info.RecordCount; recordCounter++){
@@ -184,15 +185,14 @@ int HT_GetAllEntries(HT_info* ht_info, void *value ){
                 }
                 BF_Block_Destroy(&block);
                 printRecord(records[recordCounter]);
-                return recordsSearched;
+                return blocksSearched;
             }
-            recordsSearched++;
         }
         currentBlockId = block_info.PreviousBlockId;
     }while(currentBlockId != -1);
 
     BF_Block_Destroy(&block);
-    return -1;
+    return blocksSearched;
 
 }
 

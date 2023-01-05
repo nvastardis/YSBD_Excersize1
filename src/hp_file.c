@@ -109,16 +109,20 @@ int HP_InsertEntry(HP_info* hp_info, Record record){
         memcpy( (HP_block_info*)(data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), &block_info, sizeof(HP_block_info));
         BF_Block_Destroy(&block);
     }
-    return 0;
+    return numberOfBlocks - 1;
 
 }
 
 int HP_GetAllEntries(HP_info* hp_info, int value){
-    int recordCounter, counter, blocksInFile, recordsSearched, fileFound;
+    int recordCounter,
+        counter, 
+        blocksInFile, 
+        blocksSearched, 
+        fileFound;
     void *data;
     Record *records;
 
-    recordsSearched = 0;
+    blocksSearched = 0;
     fileFound = 0;
     if(BF_GetBlockCounter(hp_info->fileDescriptor, &blocksInFile)){
         return -1;
@@ -146,13 +150,13 @@ int HP_GetAllEntries(HP_info* hp_info, int value){
                     return -1;
                 }
                 BF_Block_Destroy(&block);
-                return recordsSearched;
+                return blocksSearched;
             }
-            recordsSearched++;
         }
+        blocksSearched++;
     }
     BF_Block_Destroy(&block);
-    return -1;
+    return blocksSearched;
 }
 
 int SetUpNewBlock(HP_info *hp_info, Record record){
@@ -179,7 +183,11 @@ int SetUpNewBlock(HP_info *hp_info, Record record){
     block_info.RecordCount = 1;
     memcpy( (data + (RECORDS_PER_BLOCK * sizeof(Record)) + 10), &block_info, sizeof(HP_block_info));
     BF_Block_Destroy(&block);
-    return 0;
+
+    if(BF_GetBlockCounter(hp_info->fileDescriptor, &numberOfBlocks)){
+        return -1;
+    }
+    return numberOfBlocks - 1;
 
 }
 
