@@ -21,13 +21,11 @@ int main() {
   BF_Init(LRU);
 
   if(HT_CreateFile(FILE_NAME,10)){
-    printf("Error Creating File");
     return -1;
   }
 
   HT_info* info = HT_OpenFile(FILE_NAME);
   if(info == NULL){
-    printf("Error opening file\n");
     return -1;
   }
 
@@ -37,7 +35,7 @@ int main() {
   printf("Insert Entries\n");
   for (int id = 0; id < RECORDS_NUM; ++id) {
     record = randomRecord();
-    if(HT_InsertEntry(info, record)){
+    if(HT_InsertEntry(info, record) == -1){
       printf("Error inserting record %d", id);
       return -1;
     }

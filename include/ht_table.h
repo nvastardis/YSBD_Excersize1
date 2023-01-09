@@ -3,14 +3,14 @@
 #include <record.h>
 
 #define MAX_NUMBER_OF_BUCKETS 20
-#define RECORDS_PER_BLOCK BF_BLOCK_SIZE / sizeof(Record)
+#define RECORDS_PER_BLOCK 6
 
 typedef struct {
-    int fileDescriptor;
-    char *fileName;
-    long int numberOfBuckets;
-    int bucketDefinitionsBlock;
-    int hashtableMapping[MAX_NUMBER_OF_BUCKETS];
+    char FileName[15];
+    int FileDescriptor;
+    int NumberOfBuckets;
+    int BucketDefinitionsBlock;
+    int *HashtableMapping;
 } HT_info;
 
 typedef struct {
