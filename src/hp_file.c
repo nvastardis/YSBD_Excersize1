@@ -15,6 +15,16 @@
   }                         \
 }
 
+#define CALL_OR_DIE_POINTER(call) \
+{                                 \
+    BF_ErrorCode code = call;     \
+    if (code != BF_OK) {          \
+        BF_PrintError(code);      \
+        return NULL;              \
+    }                             \
+}
+
+
 int SetUpNewBlock(HP_info *hp_info, Record record);
 
 int HP_CreateFile(char *fileName){
@@ -50,10 +60,8 @@ HP_info* HP_OpenFile(char *fileName){
         return NULL;
     }
 
-    code = BF_OpenFile(fileName, &fileInfo->FileDescriptor);
-    if(code != BF_OK){
-        return NULL;
-    }
+    CALL_OR_DIE_POINTER(BF_OpenFile(fileName, &fileInfo->FileDescriptor));
+    
     return fileInfo;
 }
 
